@@ -1,0 +1,1 @@
+http://www.benjaminnevarez.com/2012/04/more-undocumented-query-optimizer-trace-flags/
