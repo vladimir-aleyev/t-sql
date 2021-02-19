@@ -1,3 +1,7 @@
+--SELECT * FROM sysprocesses ORDER BY lastwaittype;
+--SELECT * FROM sys.dm_exec_requests;
+--SELECT * FROM sys.dm_exec_sessions;
+
 --SELECT
 --	resource_semaphore_id,	-- Nonunique ID of the resource semaphore. 0 for the regular resource semaphore and 1 for the small-query resource semaphore.
 --	target_memory_kb,		-- Grant usage target in kilobytes.
@@ -62,7 +66,7 @@ CROSS APPLY
 	sys.dm_exec_sql_text(mg.sql_handle) AS ts
 --CROSS APPLY
 	--sys.dm_exec_query_plan(mg.plan_handle) AS ps
-
+	
 INNER JOIN
 	sys.dm_exec_sessions AS ss
 	ON mg.session_id = ss.session_id
@@ -91,4 +95,6 @@ INNER JOIN
 --	timeout_sec INT NULL
 --)
 
+--DBCC INPUTBUFFER(session_id)
+--exec sp_who2
 
