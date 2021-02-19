@@ -1,0 +1,56 @@
+﻿#####################################
+# CheckForSQL.ps1
+# 1-Pulls list of Workstations from the designated BaseOU
+# 2-Checks whether the pc is running and we have access
+# 3-Looks for services named either "MSSQL$*" or "MSSQLSERVER"
+# 4-Records detected services into the target OutPutFile
+# Gives you a running count and notes to let you know how things are going, in case you care to monitor it
+# Ray Goble
+#####################################
+
+# Modify these two for you environment
+$BaseOU     = "OU=WORKSTATIONS,OU=MyOrganization,DC=MyCompany,DC=com"
+$OutPutFile = "E:\ExportedData\WksSvcList.txt"
+
+$Counter = 0
+$ComputerList = Get-ADComputer -Filter * -SearchBase $BaseOU | Sort-Object name
+"Workstation" + [char]9 + "SvcName" + [char]9 + "SvcDispName" + [char]9 + "SvcStartMode" + [char]9 + "SvcStatus" + [char]9 + "SvcState" >$OutPutFile
+ForEach ($Computer in $ComputerList){
+    $Counter = $Counter + 1
+    if (test-connection -count 1 $Computer.name -quiet)
+    {
+        $TestPath = "\\" + $Computer.name + "\C$\Windows"
+        if (test-path $TestPath)
+        {
+            $Service = Get-WmiObject -class Win32_Service -ComputerName $Computer.name | where-object {$_.name -like "MSSQL$*" -or $_.name -eq "MSSQLSERVER"} | select name,displayname,status,startmode
+            if ($Service)
+            {
+                foreach ($Svc in $Service){
+                    $Computer.name + " : " + $Counter + "-of-" + $ComputerList.Count + [char]9 + $Svc.name + [char]9 + $Svc.DisplayName + [char]9 + $Svc.StartMode + [char]9 + $Svc.Status + [char]9 + $Svc.State
+                    $Computer.name + [char]9 + $Svc.name + [char]9 + $Svc.DisplayName + [char]9 + $Svc.StartMode + [char]9 + $Svc.Status + [char]9 + $Svc.State >>$OutPutFile
+                }
+                if ($Svc){Remove-Variable Svc}
+            }
+            else
+            {
+                $Computer.name + " : " + $Counter + "-of-" + $ComputerList.Count + [char]9 + "No SQL Found"
+            }
+            if ($Service){remove-variable Service}
+        }
+        else
+        {
+            $Computer.name + " : " + $Counter + "-of-" + $ComputerList.Count + [char]9 + "No Access"
+        }
+    }
+    else
+    {
+        $Computer.name + " : " + $Counter + "-of-" + $ComputerList.Count + [char]9 + "OffLine"
+    }
+}
+if ($BaseOU){Remove-Variable BaseOU}
+if ($OutPutFile){Remove-Variable OutPutFile}
+if ($Counter){Remove-Variable Counter}
+if ($ComputerList){Remove-Variable ComputerList}
+if ($Computer){Remove-Variable Computer}
+if ($TestPath){Remove-Variable TestPath}
+
