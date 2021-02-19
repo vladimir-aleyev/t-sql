@@ -1,0 +1,146 @@
+Option Explicit
+On Error Resume Next
+'''==============================================================================================================
+
+Dim fso
+Dim ObjOutFile
+Dim strBody
+Dim objMessage
+Dim strHTML
+Dim objNet
+Dim strCompName
+Dim objDrive
+Dim objDriveCount
+'Dim outputLines
+
+Set objNet = CreateObject("WScript.Network")
+strCompName = objNet.ComputerName
+
+'Creating File System Object
+Set fso = CreateObject("Scripting.FileSystemObject")
+'Set outputLines = CreateObject("System.Collections.ArrayList")
+
+
+'Writing headers
+
+strHTML = "<HTML>"
+strHTML = strHTML & "<HEAD>"
+strHTML = strHTML & "<BODY>"
+strHTML = strHTML & "<H1>" & strCompName & ": List of backup files & data files</H1>"
+strHTML = strHTML & "<TABLE border=1><tr><th align='center'>Type</th><th align='center'>File Name</th><th align='center'>File Path</th><th align='center'>Size (Mb)</th><th align='center'>Last Modified</th><th align='center'>Drive Free Space (Mb)</th></tr>"
+
+
+'Call the GetFile function to get all files
+
+GetFiles("F:\Backup_work")
+GetFiles("I:\Backup_work")
+GetFiles("F:\Backup_work_diff")
+GetFiles("F:\Backup_MSFO")
+GetFiles("F:\Backup_system")
+GetFiles("H:\WORK_BASE")
+GetFiles("H:\msfo_base")
+GetFiles("H:\msfo_new")
+
+
+
+strHTML = strHTML & "</TABLE>"
+strHTML = strHTML & "</BODY>"
+strHTML = strHTML & "</HTML>"
+
+''''=============================================================================================================
+
+Set objMessage = CreateObject("CDO.Message")
+ 
+objMessage.Subject = strCompName & " : Backup files Report" 
+objMessage.From = """SQLDBA"" <sqldba@voz.ru>" 
+objMessage.To = "v.aleev@voz.ru" 
+objMessage.HTMLBody = strHTML
+
+'objMessage.Addattachment ObjOutFile
+
+'==This section provides the configuration information for the remote SMTP server.
+
+objMessage.Configuration.Fields.Item _
+("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2 
+
+'Name or IP of Remote SMTP Server
+objMessage.Configuration.Fields.Item _
+("http://schemas.microsoft.com/cdo/configuration/smtpserver") = "smtp.voz.ru"
+
+'Type of authentication, NONE, Basic (Base64 encoded), NTLM
+'cdoAnonymous = 0 'Do not authenticate
+'cdoBasic = 1 'basic (clear-text) authentication
+'cdoNTLM = 2 'NTLM
+objMessage.Configuration.Fields.Item _
+("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate") = 1
+
+'Your UserID on the SMTP server
+objMessage.Configuration.Fields.Item _
+("http://schemas.microsoft.com/cdo/configuration/sendusername") = "mail\sqldba"
+
+'Your password on the SMTP server
+objMessage.Configuration.Fields.Item _
+("http://schemas.microsoft.com/cdo/configuration/sendpassword") = "$QLadmin1"
+
+'Server port (typically 25)
+objMessage.Configuration.Fields.Item _
+("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = 25 
+
+'Use SSL for the connection (False or True)
+objMessage.Configuration.Fields.Item _
+("http://schemas.microsoft.com/cdo/configuration/smtpusessl") = False
+
+'Connection Timeout in seconds (the maximum time CDO will try to establish a connection to the SMTP server)
+objMessage.Configuration.Fields.Item _
+("http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout") = 60
+
+objMessage.Configuration.Fields.Update
+'==End remote SMTP server configuration section==
+
+objMessage.Send
+
+Function GetFiles(FolderName)
+On Error Resume Next
+Dim ObjFolder
+Dim ObjSubFolders
+Dim ObjSubFolder
+Dim ObjFiles
+Dim ObjFile
+Dim ObjDrive
+
+
+Set ObjFolder = fso.GetFolder(FolderName)
+Set ObjFiles = ObjFolder.Files
+Set ObjDrive = fso.GetDrive(fso.GetDriveName(FolderName))
+
+'Write all files to output files
+    For Each ObjFile In ObjFiles
+		'strBody = strBody & "File;	" & ObjFile.Name & ";	" & ObjFile.Path & ";	" & ObjFile.Size & ";	" & ObjFile.DateLastModified & vbCRLF
+		strHTML = strHTML & "<tr><td>File</td><td align='left'>" & ObjFile.Name & "</td><td align='left'>" & ObjFile.Path & "</td><td align='right'>" & FormatNumber(ObjFile.Size/1024/1024, 0) & "</td><td align='right'>" & ObjFile.DateLastModified & "</td><td align='right'>" & FormatNumber(ObjDrive.FreeSpace/1024/1024, 0) & "</td></tr>"  & vbCRLF
+	Next
+
+'''''
+'	for each f in fso.GetFolder(".").files
+'		outputLines.Add f.Name
+'	next
+'	outputLines.Sort() 
+''''''
+	
+'Getting all subfolders 
+Set ObjSubFolders = ObjFolder.SubFolders
+    For Each ObjFolder In ObjSubFolders
+	'Writing SubFolder Name and Path
+	'strBody = strBody & "Folder;	" & ObjFolder.Name & ";	" & ObjFolder.Path & vbCRLF
+	strHTML = strHTML & "<tr><td>Folder</td><td align='left'>" & ObjFolder.Name & "</td><td align='left'>" & ObjFolder.Path & "</td><td>-</td><td>-</td><td>-</td></tr>" & vbCRLF
+	'Getting all Files from subfolder 
+	GetFiles(ObjFolder.Path) 
+	Next
+End Function 
+
+
+
+
+
+
+
+

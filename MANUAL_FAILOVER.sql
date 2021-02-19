@@ -1,0 +1,1 @@
+USE [master];ALTER DATABASE [ProvisioningService71] SET PARTNER FAILOVER
