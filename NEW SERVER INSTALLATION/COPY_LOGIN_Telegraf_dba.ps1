@@ -1,0 +1,1 @@
+﻿Copy-DbaLogin -Source itserv14 -Destination PROJECT,PROJECT-DEV,SPDB -Login Telegraf_dba
