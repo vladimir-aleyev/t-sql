@@ -11,18 +11,19 @@ FROM
 		SELECT
 			*,
 			CHARINDEX(':', resource_description) AS file_index,
-			CHARINDEX(':', resource_description, CHARINDEX(':', resource_description)+1) AS page_index,
+			CHARINDEX(':', resource_description,
+			CHARINDEX(':', resource_description)) AS page_index,
 			resource_description AS rd
 		FROM
 			sys.dm_os_waiting_tasks wt
 		WHERE
-			wait_type LIKE 'PAGEIOLATCH%'
+			wait_type LIKE 'PAGELATCH%'
 		) AS wt
 	ON bd.database_id = SUBSTRING(wt.rd, 0, wt.file_index)
 AND
-bd.file_id = SUBSTRING(wt.rd, wt.file_index+1, 1)
+bd.file_id = SUBSTRING(wt.rd, wt.file_index, wt.page_index)
 AND
-bd.page_id = SUBSTRING(wt.rd, wt.page_index+1, CHARINDEX(':', REVERSE(wt.rd))) 
+bd.page_id = SUBSTRING(wt.rd, wt.page_index, LEN(wt.rd))
 JOIN 
 	sys.allocation_units au ON bd.allocation_unit_id = au.allocation_unit_id
 JOIN
