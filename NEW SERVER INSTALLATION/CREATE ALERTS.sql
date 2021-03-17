@@ -13,7 +13,7 @@ EXEC msdb.dbo.sp_add_alert @name=N'Severity 17 - Insufficient Resources',
 GO
 
 /****** Object:  Alert [Severity 18]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 18', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 18 - Nonfatal Internal Error', 
 		@message_id=0, 
 		@severity=18, 
 		@enabled=1, 
@@ -24,7 +24,7 @@ EXEC msdb.dbo.sp_add_alert @name=N'Severity 18',
 GO
 
 /****** Object:  Alert [Severity 19]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 19', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 19 - Fatal Error in Resource', 
 		@message_id=0, 
 		@severity=19, 
 		@enabled=1, 
@@ -35,7 +35,7 @@ EXEC msdb.dbo.sp_add_alert @name=N'Severity 19',
 GO
 
 /****** Object:  Alert [Severity 20]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 20', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 20 - Fatal Error in Current Process', 
 		@message_id=0, 
 		@severity=20, 
 		@enabled=1, 
@@ -46,7 +46,7 @@ EXEC msdb.dbo.sp_add_alert @name=N'Severity 20',
 GO
 
 /****** Object:  Alert [Severity 21]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 21', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 21 - Fatal Error in Database Processes', 
 		@message_id=0, 
 		@severity=21, 
 		@enabled=1, 
@@ -57,7 +57,7 @@ EXEC msdb.dbo.sp_add_alert @name=N'Severity 21',
 GO
 
 /****** Object:  Alert [Severity 22]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 22', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 22 - Fatal Error: Table Integrity Suspect', 
 		@message_id=0, 
 		@severity=22, 
 		@enabled=1, 
@@ -68,7 +68,7 @@ EXEC msdb.dbo.sp_add_alert @name=N'Severity 22',
 GO
 
 /****** Object:  Alert [Severity 23]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 23', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 23 - Fatal Error: Database Integrity Suspect', 
 		@message_id=0, 
 		@severity=23, 
 		@enabled=1, 
@@ -79,7 +79,7 @@ EXEC msdb.dbo.sp_add_alert @name=N'Severity 23',
 GO
 
 /****** Object:  Alert [Severity 24]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 24', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 24 - Fatal Error: Hardware Error', 
 		@message_id=0, 
 		@severity=24, 
 		@enabled=1, 
@@ -90,7 +90,7 @@ EXEC msdb.dbo.sp_add_alert @name=N'Severity 24',
 GO
 
 /****** Object:  Alert [Severity 25]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 25', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 25 - Fatal Error', 
 		@message_id=0, 
 		@severity=25, 
 		@enabled=1, 
