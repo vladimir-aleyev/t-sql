@@ -2,7 +2,7 @@ USE [msdb]
 GO
 
 /****** Object:  Alert [Severity 17]    Script Date: 03.08.2020 13:23:15 ******/
-EXEC msdb.dbo.sp_add_alert @name=N'Severity 17', 
+EXEC msdb.dbo.sp_add_alert @name=N'Severity 17 - Insufficient Resources', 
 		@message_id=0, 
 		@severity=17, 
 		@enabled=1, 
