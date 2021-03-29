@@ -1,0 +1,41 @@
+PS C:\Windows\system32> Get-ClusterResource mow14srv-dag01_M1M4SVSQLDAG01L | Get-ClusterParameter HostRecordTTL, RegisterAllProvidersIP
+
+Object                         Name                   Value Type  
+------                         ----                   ----- ----  
+mow14srv-dag01_M1M4SVSQLDAG01L HostRecordTTL          1200  UInt32
+mow14srv-dag01_M1M4SVSQLDAG01L RegisterAllProvidersIP 1     UInt32
+
+
+
+PS C:\Windows\system32> Get-ClusterResource mow14srv-dag01_M1M4SVSQLDAG01L | Set-ClusterParameter -Name HostRecordTTL -Value 300
+WARNING: The properties were stored, but not all changes will take effect until mow14srv-dag01_M1M4SVSQLDAG01L is taken offline and then online again.
+
+PS C:\Windows\system32> Get-ClusterResource mow14srv-dag01_M1M4SVSQLDAG01L | Get-ClusterParameter HostRecordTTL, RegisterAllProvidersIP
+
+Object                         Name                   Value Type  
+------                         ----                   ----- ----  
+mow14srv-dag01_M1M4SVSQLDAG01L HostRecordTTL          300   UInt32
+mow14srv-dag01_M1M4SVSQLDAG01L RegisterAllProvidersIP 1     UInt32
+
+
+
+PS C:\Windows\system32> Get-ClusterResource mow14srv-dag01_M1M4SVSQLDAG01L | Set-ClusterParameter -Name RegisterAllProvidersIP -Value 0
+WARNING: The properties were stored, but not all changes will take effect until mow14srv-dag01_M1M4SVSQLDAG01L is taken offline and then online again.
+
+PS C:\Windows\system32> Get-ClusterResource mow14srv-dag01_M1M4SVSQLDAG01L | Get-ClusterParameter HostRecordTTL, RegisterAllProvidersIP
+
+Object                         Name                   Value Type  
+------                         ----                   ----- ----  
+mow14srv-dag01_M1M4SVSQLDAG01L HostRecordTTL          300   UInt32
+mow14srv-dag01_M1M4SVSQLDAG01L RegisterAllProvidersIP 0     UInt32
+
+
+
+--Force update DNS with the following PowerShell command:
+
+Get-ClusterResource mow14srv-dag01_M1M4SVSQLDAG01L | Update-ClusterNetworkNameResource
+
+
+
+
+
