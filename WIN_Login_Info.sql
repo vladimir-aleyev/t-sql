@@ -1,0 +1,1 @@
+xp_logininfo 'BUILTIN\Administrators', 'members'
