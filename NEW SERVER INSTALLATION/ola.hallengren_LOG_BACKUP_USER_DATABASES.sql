@@ -1,11 +1,10 @@
 USE [msdb]
 GO
 
-/****** Object:  Job [ola.hallengren_LOG_BACKUP_USER_DATABASES]    Script Date: 24.12.2020 11:18:26 ******/
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [Database Maintenance]    Script Date: 24.12.2020 11:18:26 ******/
+
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'Database Maintenance' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'Database Maintenance'
@@ -25,7 +24,7 @@ EXEC @ReturnCode =  msdb.dbo.sp_add_job @job_name=N'ola.hallengren_LOG_BACKUP_US
 		@owner_login_name=N'sa', 
 		@notify_email_operator_name=N'DBA_ALERT', @job_id = @jobId OUTPUT
 IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback
-/****** Object:  Step [STEP_01_LOG_BACKUP_USER_DATABASES]    Script Date: 24.12.2020 11:18:26 ******/
+
 EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'STEP_01_LOG_BACKUP_USER_DATABASES', 
 		@step_id=1, 
 		@cmdexec_success_code=0, 
@@ -36,7 +35,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'STEP_01_
 		@retry_attempts=0, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'TSQL', 
-		@command=N'DECLARE @BACKUP_PATH VARCHAR(128) = ''\\CLBKP-DB02\backup_d$'';
+		@command=N'DECLARE @BACKUP_PATH VARCHAR(128) = ''\\<server name>\<folder name>$'';
 
 EXECUTE dbo.DatabaseBackup
 @Databases = ''USER_DATABASES''
@@ -54,9 +53,6 @@ EXECUTE dbo.DatabaseBackup
 ,@DirectoryStructure = ''{ServerName}{DirectorySeparator}{BackupType}{DirectorySeparator}{DatabaseName}''
 ,@FileName=''{InstanceName}_{DatabaseName}_{BackupType}_{Partial}_{CopyOnly}_{Year}{Month}{Day}_{Hour}{Minute}{Second}_{FileNumber}.{FileExtension}''
 ,@CleanupMode =''BEFORE_BACKUP''
-/*
-14 дней * на 24 часа = @CleanupTime = 336 в часах
-*/
 ,@CleanupTime = 340', 
 		@database_name=N'msdb', 
 		@flags=0
