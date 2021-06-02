@@ -1,11 +1,10 @@
 USE [msdb]
 GO
 
-/****** Object:  Job [ola.hallengren_FULL_BACKUP_SYSTEM_DATABASES]    Script Date: 24.12.2020 11:08:03 ******/
 BEGIN TRANSACTION
 DECLARE @ReturnCode INT
 SELECT @ReturnCode = 0
-/****** Object:  JobCategory [Database Maintenance]    Script Date: 24.12.2020 11:08:03 ******/
+
 IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'Database Maintenance' AND category_class=1)
 BEGIN
 EXEC @ReturnCode = msdb.dbo.sp_add_category @class=N'JOB', @type=N'LOCAL', @name=N'Database Maintenance'
@@ -37,7 +36,7 @@ EXEC @ReturnCode = msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'STEP_01_
 		@retry_attempts=0, 
 		@retry_interval=0, 
 		@os_run_priority=0, @subsystem=N'TSQL', 
-		@command=N'DECLARE @BACKUP_PATH VARCHAR(128) = ''\\CLBKP-DB02\backup_d$'';
+		@command=N'DECLARE @BACKUP_PATH VARCHAR(128) = ''\\<server name>\backup$'';
 
 EXECUTE dbo.DatabaseBackup
 @Databases = ''SYSTEM_DATABASES''
@@ -53,9 +52,6 @@ EXECUTE dbo.DatabaseBackup
 ,@DirectoryStructure = ''{ServerName}{DirectorySeparator}{BackupType}{DirectorySeparator}{DatabaseName}''
 ,@FileName=''{InstanceName}_{DatabaseName}_{BackupType}_{Partial}_{CopyOnly}_{Year}{Month}{Day}_{Hour}{Minute}{Second}_{FileNumber}.{FileExtension}''
 ,@CleanupMode =''BEFORE_BACKUP''
-/*
-14 * 24 + запас = @CleanupTime = 336 в часах
-*/
 ,@CleanupTime =340', 
 		@database_name=N'msdb', 
 		@flags=0
