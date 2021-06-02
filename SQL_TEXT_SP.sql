@@ -11,7 +11,7 @@ from
 	on
 	prc.object_id = mdl.object_id
 WHERE
-definition LIKE '%- çàìåíà íà %'
+definition LIKE '%<your text>%'
 
 ----------------------------------------------------
 --                     2                          --
@@ -26,7 +26,7 @@ FROM
 	sys.objects AS o
 	ON m.object_id = o.object_id 
 WHERE 
-	m.definition LIKE '%- çàìåíà íà %'
+	m.definition LIKE '%<your text>%'
 order by
 	ROUTINE_NAME
 
