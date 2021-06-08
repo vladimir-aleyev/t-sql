@@ -6,6 +6,7 @@ DECLARE @b_end DATETIME
 DECLARE @b_size NUMERIC(20,0)
 DECLARE @type CHAR(1)
 
+DROP TABLE IF EXISTS #backup_report
 CREATE TABLE
 	#backup_report
 	(
@@ -14,7 +15,7 @@ CREATE TABLE
 	physical_device_name  VARCHAR(255),
 	backup_start_date DATETIME,
 	backup_finish_date DATETIME,
-	BackupSizeKB NUMERIC(20,0),
+	CompressedBackupSizeKB NUMERIC(20,0),
 	File_Exists INT,
 	backup_type CHAR(1)
 	)
@@ -27,7 +28,7 @@ FOR
 			m.physical_device_name,
 			b.backup_start_date,
 			b.backup_finish_date,
-			b.compressed_backup_size/1024.0 AS BackupSizeKB,
+			b.compressed_backup_size/1024.0 AS CompressedBackupSizeKB,
 			--backup_size/1024.0 AS BackupSizeKB,
 			b.[type]
 		FROM
@@ -39,7 +40,7 @@ FOR
 		WHERE 
 		--	database_name = [?]
 		--	AND
-			backup_finish_date > GETDATE() - 7  ---1 WEEK backup
+			backup_finish_date > GETDATE() - 4  ---1 WEEK backup
 
 		ORDER BY b.backup_finish_date DESC
 
@@ -52,7 +53,7 @@ BEGIN TRY
        IF (@@fetch_status <> -2)
        BEGIN
 		EXEC Master.dbo.xp_fileexist @FileName, @File_Exists OUT
-		INSERT INTO #backup_report([database_name],physical_device_name,backup_start_date,backup_finish_date,BackupSizeKB,File_Exists,backup_type)
+		INSERT INTO #backup_report([database_name],physical_device_name,backup_start_date,backup_finish_date,CompressedBackupSizeKB,File_Exists,backup_type)
 			VALUES(@DBName, @FileName, @b_start, @b_end, @b_size, @File_Exists, @type )
 	   END
    
@@ -79,18 +80,17 @@ SELECT * FROM #backup_report WHERE File_Exists = 1
 ORDER BY
 	database_name,backup_type, backup_start_date DESC;
 
-SELECT database_name, backup_type, SUM(BackupSizeKB/1048576) AS	BackupSizeGB FROM  #backup_report GROUP BY database_name, backup_type  ORDER BY database_name;
+SELECT database_name, backup_type, SUM(CompressedBackupSizeKB/1048576) AS	BackupSizeGB FROM  #backup_report GROUP BY database_name, backup_type  ORDER BY database_name;
 
 --total by type--
-SELECT backup_type, SUM(BackupSizeKB/1048576/*/8*/) AS	FULL_BackupSizeGB FROM  #backup_report WHERE backup_type = 'D' GROUP BY backup_type;  -- IN CASE OF FULL BACKUP split to 8 files: so /8 added
+SELECT backup_type, SUM(CompressedBackupSizeKB/1048576/*/8*/) AS	FULL_BackupSizeGB FROM  #backup_report WHERE backup_type = 'D' GROUP BY backup_type;  -- IN CASE OF FULL BACKUP split to 8 files: so /8 added
 
-SELECT backup_type, SUM(BackupSizeKB/1048576) AS	DIFF_BackupSizeGB FROM  #backup_report WHERE backup_type = 'I' GROUP BY backup_type;
+SELECT backup_type, SUM(CompressedBackupSizeKB/1048576) AS	DIFF_BackupSizeGB FROM  #backup_report WHERE backup_type = 'I' GROUP BY backup_type;
 
-SELECT backup_type, SUM(BackupSizeKB/1048576) AS	LOG_BackupSizeGB FROM  #backup_report WHERE backup_type = 'L' GROUP BY backup_type;
+SELECT backup_type, SUM(CompressedBackupSizeKB/1048576) AS	LOG_BackupSizeGB FROM  #backup_report WHERE backup_type = 'L' GROUP BY backup_type;
 
 DROP TABLE IF EXISTS #backup_report
 
 GO
-
 
 
