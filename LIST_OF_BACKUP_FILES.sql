@@ -11,6 +11,7 @@ CREATE TABLE #backup_list_table
 	[backup_finish_date] datetime,
 	[backup_type] nvarchar(50),
 	[backup_size_mb] int,
+	[compressed_backup_size_mb] int,
 	[physical_device_name] nvarchar(260),
 	[backupset_name] nvarchar(128),
 	[file_exists] int
@@ -32,6 +33,7 @@ SELECT
 		WHEN 'Q' THEN 'Differential partial'
     END                                             AS backup_type, 
     CAST((msdb.dbo.backupset.backup_size/1024/1024) AS int) AS 'backup_size (Mb)', 
+    CAST((msdb.dbo.backupset.compressed_backup_size/1024/1024) AS int) AS 'compressed_backup_size (Mb)', 
     msdb.dbo.backupmediafamily.physical_device_name,  
     msdb.dbo.backupset.name                          AS backupset_name,
     NULL
