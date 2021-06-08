@@ -52,16 +52,16 @@ SELECT
 	SERVERPROPERTY ('productlevel') AS 'SP Level',
 	SERVERPROPERTY ('edition') AS 'Edition',
 	SERVERPROPERTY ('MachineName') AS 'HostName',
-	@@VERSION AS 'VERSION_FULL',
-	DB.collation_name AS 'Database Collation',
 	@NumberOfLogicalCPUs AS '#CPU',
 	@TotalRAMInGB AS 'RAM (MB)', 
 	@tcp_port AS Local_TCP_Port,
+	DB.collation_name AS 'Database Collation',
 	SI.DatabaseName,
 	SI.DataFileSizeMB,
 	SI.LogFileSizeMB,
 	SI.TotalDBSizeMB,
-	DB.recovery_model_desc
+	DB.recovery_model_desc,
+	@@VERSION AS 'VERSION_FULL'
 FROM
 	#SERVER_INFO SI
 INNER JOIN
@@ -82,5 +82,3 @@ RAISERROR ('Current MS SQL Server version is not supported...', -- Message text.
 
 
 --select * from sys.dm_server_services
-
-
